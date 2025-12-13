@@ -99,9 +99,11 @@ BASE_TEMPLATE = """
     {% block base_content %}{% endblock %}
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-2 mt-1">
+    <footer class="bg-gray-800 text-white py-8 mt-12">
         <div class="container mx-auto px-4 text-center">
-            <p class="text-sm text-gray-400">PokeTrade - The TCG Intelligence Hub - Market data • Collections • Events</p>
+            <p class="mb-2">PokeTrade - The TCG Intelligence Hub</p>
+            <p class="text-sm text-gray-400">Market data • Collections • Events • All in one place</p>
+            <p class="text-xs text-gray-500 mt-4">MVP Phase 2 - Using Your Schema</p>
         </div>
     </footer>
 </body>
@@ -1072,8 +1074,3 @@ def my_binder():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=False, host='0.0.0.0', port=port)
-
-
-#if __name__ == '__main__':
-#    app.run(debug=True, host='0.0.0.0', port=5000)
-# --------

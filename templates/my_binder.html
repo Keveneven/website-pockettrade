@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}My Binder - PokeTrade{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h2 class="text-3xl font-bold mb-2">My Binder</h2>
+            <p class="text-gray-600">Your collection snapshot</p>
+        </div>
+    </div>
+
+    <section class="mb-8">
+        <h3 class="text-2xl font-bold mb-4">
+            Has ({{ haves|length }})
+        </h3>
+        {% if haves %}
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {% for card in haves %}
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <img src="{{ card.image_url }}" alt="{{ card.name }}"
+                     class="w-full aspect-[2.5/3.5] object-contain bg-gray-100">
+                <div class="p-2">
+                    <p class="font-bold text-sm truncate">{{ card.name }}</p>
+                    <p class="text-xs text-gray-600">{{ card.set_name }}</p>
+                    <p class="text-xs text-gray-500">Qty: {{ card.quantity }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-gray-600">
+            You haven't added any cards to your have list yet.
+        </p>
+        {% endif %}
+    </section>
+
+    <section>
+        <h3 class="text-2xl font-bold mb-4">
+            Wants ({{ wants|length }})
+        </h3>
+        {% if wants %}
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {% for card in wants %}
+            <div class="bg-white rounded-lg shadow overflow-hidden border-2 border-yellow-400">
+                <img src="{{ card.image_url }}" alt="{{ card.name }}"
+                     class="w-full aspect-[2.5/3.5] object-contain bg-gray-100">
+                <div class="p-2">
+                    <p class="font-bold text-sm truncate">{{ card.name }}</p>
+                    {% if card.target_price %}
+                    <p class="text-xs text-green-600">
+                        Target: ${{ "%.2f"|format(card.target_price) }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-gray-600">
+            No cards in your want list yet.
+        </p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}PokeTrade - Home{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-16">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-4xl font-bold mb-4">The TCG Intelligence Hub</h2>
+        <p class="text-xl mb-8">
+            Track collections, discover listings, find events—all in one place
+        </p>
+        {% if not session.get('user_id') %}
+        <div class="flex justify-center gap-4">
+            <a href="/register"
+               class="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100">
+                Sign Up Free
+            </a>
+            <a href="/cards"
+               class="border-2 border-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600">
+                Browse Cards
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container mx-auto px-4 py-8">
+    <!-- Stats -->
+    <section class="mb-12">
+        <h3 class="text-3xl font-bold mb-6">Market Overview</h3>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="bg-white p-6 rounded-lg shadow">
+                <div class="text-gray-500 text-sm">Total Cards</div>
+                <div class="text-3xl font-bold">{{ total_cards }}</div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow">
+                <div class="text-gray-500 text-sm">Active Listings</div>
+                <div class="text-3xl font-bold">{{ active_listings }}</div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow">
+                <div class="text-gray-500 text-sm">Upcoming Events</div>
+                <div class="text-3xl font-bold">{{ upcoming_events }}</div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow">
+                <div class="text-gray-500 text-sm">Active Users</div>
+                <div class="text-3xl font-bold">{{ active_users }}</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent Listings -->
+    {% if listings %}
+    <section class="mb-12">
+        <h3 class="text-3xl font-bold mb-6">Recent Listings</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for listing in listings %}
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                {% if listing.image_url %}
+                <img src="{{ listing.image_url }}" alt="{{ listing.card_name }}"
+                     class="w-full h-64 object-contain bg-gray-100 p-4">
+                {% else %}
+                <div class="w-full h-64 bg-gray-200 flex items-center justify-center">
+                    <span class="text-gray-400">No Image</span>
+                </div>
+                {% endif %}
+                <div class="p-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h4 class="font-bold text-lg">{{ listing.card_name }}</h4>
+                            <p class="text-sm text-gray-600">
+                                {{ listing.set_name }} #{{ listing.card_number }}
+                            </p>
+                        </div>
+                        {% if listing.condition %}
+                        <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded">
+                            {{ listing.condition }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="text-2xl font-bold text-green-600">
+                            ${{ "%.2f"|format(listing.price) }}
+                        </span>
+                        <span class="text-sm text-gray-500">
+                            by {{ listing.username }}
+                        </span>
+                    </div>
+                    {% if listing.description %}
+                    <p class="text-sm text-gray-600 mt-2">
+                        {{ listing.description[:100] }}{% if listing.description|length > 100 %}...{% endif %}
+                    </p>
+                    {% endif %}
+                    <a href="/cards/{{ listing.card_id }}"
+                       class="block w-full mt-4 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 text-center">
+                        View Card
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Upcoming Events -->
+    {% if events %}
+    <section class="mb-12">
+        <h3 class="text-3xl font-bold mb-6">Upcoming Events</h3>
+        <div class="space-y-4">
+            {% for event in events %}
+            <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h4 class="text-xl font-bold mb-2">{{ event.name }}</h4>
+                        <p class="text-gray-600 mb-2">
+                            📍 {{ event.location_venue }}{% if event.location_city %},
+                            {{ event.location_city }}, {{ event.location_region }}{% endif %}
+                        </p>
+                        <p class="text-gray-600 mb-4">📅 {{ event.start_datetime[:10] }}</p>
+                        {% if event.description %}
+                        <p class="text-sm text-gray-700">{{ event.description }}</p>
+                        {% endif %}
+                        <div class="mt-4">
+                            <span class="text-sm font-semibold">
+                                {{ event.attendee_count }} collectors attending
+                            </span>
+                        </div>
+                    </div>
+                    <a href="/events/{{ event.id }}"
+                       class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        View Event
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+
+{% endblock %}

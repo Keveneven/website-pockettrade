@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}PokeTrade - Binders{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h2 class="text-3xl font-bold mb-6">Public Binders</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for user in users %}
+        <a href="/binders/{{ user.username }}"
+           class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
+            <h3 class="text-xl font-bold mb-2">{{ user.username }}</h3>
+            <p class="text-gray-600 text-sm mb-1">Has {{ user.have_count }} cards</p>
+            <p class="text-gray-600 text-sm mb-1">Wants {{ user.want_count }} cards</p>
+            <p class="text-gray-600 text-sm">Listings: {{ user.listing_count }}</p>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

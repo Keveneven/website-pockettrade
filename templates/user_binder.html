@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.username }}'s Binder - PokeTrade{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h2 class="text-3xl font-bold mb-2">{{ user.username }}'s Binder</h2>
+            <p class="text-gray-600">Public trading profile</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Haves -->
+        <section class="lg:col-span-2">
+            <h3 class="text-2xl font-bold mb-4">
+                Has ({{ haves|length }})
+            </h3>
+            {% if haves %}
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {% for card in haves %}
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <img src="{{ card.image_url }}" alt="{{ card.name }}"
+                         class="w-full aspect-[2.5/3.5] object-contain bg-gray-100">
+                    <div class="p-2">
+                        <p class="font-bold text-sm truncate">{{ card.name }}</p>
+                        <p class="text-xs text-gray-600">{{ card.set_name }}</p>
+                        <p class="text-xs text-gray-500">Qty: {{ card.quantity }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-gray-600">
+                No cards listed in their have list yet.
+            </p>
+            {% endif %}
+        </section>
+
+        <!-- Listings -->
+        <section>
+            <h3 class="text-2xl font-bold mb-4">
+                Active Listings ({{ listings|length }})
+            </h3>
+            {% if listings %}
+            <div class="space-y-3">
+                {% for listing in listings %}
+                <div class="bg-white p-3 rounded-lg shadow flex gap-3">
+                    <img src="{{ listing.image_url }}" alt="{{ listing.card_name }}"
+                         class="w-16 h-24 object-contain bg-gray-100 rounded">
+                    <div>
+                        <p class="font-bold text-sm">{{ listing.card_name }}</p>
+                        <p class="text-xs text-gray-600 mb-1">{{ listing.set_name }}</p>
+                        <p class="text-sm font-bold text-green-600">
+                            ${{ "%.2f"|format(listing.price) }}
+                        </p>
+                        <p class="text-xs text-gray-500">
+                            Qty: {{ listing.quantity }} • {{ listing.condition }}
+                        </p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-gray-600">
+                No active listings from this user.
+            </p>
+            {% endif %}
+        </section>
+    </div>
+
+    <!-- Wants -->
+    <section class="mt-10">
+        <h3 class="text-2xl font-bold mb-4">
+            Wants ({{ wants|length }})
+        </h3>
+        {% if wants %}
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {% for card in wants %}
+            <div class="bg-white rounded-lg shadow overflow-hidden border-2 border-yellow-400">
+                <img src="{{ card.image_url }}" alt="{{ card.name }}"
+                     class="w-full aspect-[2.5/3.5] object-contain bg-gray-100">
+                <div class="p-2">
+                    <p class="font-bold text-sm truncate">{{ card.name }}</p>
+                    {% if card.target_price %}
+                    <p class="text-xs text-green-600">
+                        Target: ${{ "%.2f"|format(card.target_price) }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-gray-600">
+            No cards in their want list yet.
+        </p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}PokeTrade - Cards{% endblock %}
+
+{% block content %} 
+<div class="container mx-auto px-4 py-8">
+    <h2 class="text-3xl font-bold mb-6">Card Library</h2>
+    
+    <!-- Search/Filter -->
+    <div class="bg-white p-6 rounded-lg shadow mb-8">
+        <form method="GET" class="flex gap-4">
+            <input type="text" name="search" placeholder="Search cards..."
+                   value="{{ request.args.get('search', '') }}"
+                   class="flex-1 px-4 py-2 border rounded">
+            <select name="set" class="px-4 py-2 border rounded">
+                <option value="">All Sets</option>
+                {% for set in sets %}
+                <option value="{{ set.id }}"
+                        {% if request.args.get('set') == set.id|string %}selected{% endif %}>
+                    {{ set.name }}
+                </option>
+                {% endfor %}
+            </select>
+            <button type="submit"
+                    class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+                Search
+            </button>
+        </form>
+    </div>
+
+    <!-- Cards Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        {% for card in cards %}
+        <a href="/cards/{{ card.id }}"
+           class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden">
+            {% if card.image_url %}
+            <img src="{{ card.image_url }}" alt="{{ card.name }}"
+                 class="w-full aspect-[2.5/3.5] object-contain bg-gray-100">
+            {% else %}
+            <div class="w-full aspect-[2.5/3.5] bg-gray-200 flex items-center justify-center">
+                <span class="text-gray-400 text-sm">No Image</span>
+            </div>
+            {% endif %}
+            <div class="p-3">
+                <h4 class="font-bold text-sm truncate">{{ card.name }}</h4>
+                <p class="text-xs text-gray-600">{{ card.set_name }}</p>
+                {% if card.floor_price %}
+                <p class="text-sm font-bold text-green-600 mt-2">
+                    ${{ "%.2f"|format(card.floor_price) }}
+                </p>
+                {% endif %}
+                <div class="flex justify-between text-xs text-gray-500 mt-2">
+                    <span>{{ card.have_count }} have</span>
+                    <span>{{ card.want_count }} want</span>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

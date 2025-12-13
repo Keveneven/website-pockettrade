@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}{{ card.name }} - PokeTrade{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Card Image -->
+        <div class="bg-white p-6 rounded-lg shadow">
+            {% if card.image_url %}
+            <img src="{{ card.image_url }}" alt="{{ card.name }}" class="w-full max-w-md mx-auto">
+            {% else %}
+            <div class="w-full aspect-[2.5/3.5] bg-gray-200 flex items-center justify-center">
+                <span class="text-gray-400">No Image Available</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Card Info -->
+        <div>
+            <h2 class="text-4xl font-bold mb-2">{{ card.name }}</h2>
+            <p class="text-xl text-gray-600 mb-4">
+                {{ card.set_name }} #{{ card.card_number }}
+            </p>
+
+            {% if card.rarity %}
+            <p class="text-gray-600 mb-2">
+                <strong>Rarity:</strong> {{ card.rarity }}
+            </p>
+            {% endif %}
+
+            <!-- Market Stats -->
+            <div class="bg-blue-50 p-6 rounded-lg mb-6">
+                <h3 class="text-xl font-bold mb-4">Market Intelligence</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <div class="text-sm text-gray-600">Active Listings</div>
+                        <div class="text-2xl font-bold">{{ listings|length }}</div>
+                    </div>
+                    <div>
+                        <div class="text-sm text-gray-600">Want This</div>
+                        <div class="text-2xl font-bold">{{ wants|length }}</div>
+                    </div>
+
+                    {% if listings %}
+                    <div>
+                        <div class="text-sm text-gray-600">Floor Price</div>
+                        <div class="text-2xl font-bold text-green-600">
+                            ${{ "%.2f"|format(listings[0].price) }}
+                        </div>
+                    </div>
+                    <div>
+                        <div class="text-sm text-gray-600">Avg Price</div>
+                        <div class="text-2xl font-bold">
+                            ${{ "%.2f"|format((listings|sum(attribute='price')) / (listings|length)) }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Active Listings -->
+            {% if listings %}
+            <h3 class="text-2xl font-bold mb-4">
+                Active Listings ({{ listings|length }})
+            </h3>
+            <div class="space-y-3 mb-6">
+                {% for listing in listings %}
+                <div class="bg-white p-4 rounded-lg shadow border-l-4 border-green-500">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="font-bold text-lg">
+                                ${{ "%.2f"|format(listing.price) }}
+                            </p>
+                            <p class="text-sm text-gray-600">
+                                {{ listing.condition or 'Not specified' }} • Qty: {{ listing.quantity }}
+                            </p>
+                            <p class="text-sm text-gray-500">
+                                Seller:
+                                <a href="/binders/{{ listing.username }}"
+                                   class="text-blue-600 hover:underline">
+                                    {{ listing.username }}
+                                </a>
+                            </p>
+                            {% if listing.location_city %}
+                            <p class="text-sm text-gray-500">
+                                📍 {{ listing.location_city }}, {{ listing.location_region }}
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-gray-600 mb-6">
+                No active listings for this card.
+            </p>
+            {% endif %}
+
+            <!-- Want List -->
+            {% if wants %}
+            <h3 class="text-xl font-bold mb-3">
+                {{ wants|length }} collectors want this
+            </h3>
+            <div class="flex flex-wrap gap-2">
+                {% for want in wants %}
+                <a href="/binders/{{ want.username }}"
+                   class="text-blue-600 hover:underline">
+                    {{ want.username }}
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
