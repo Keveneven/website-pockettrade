@@ -10,6 +10,7 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
+
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'dev-key-change-in-prod')
 
@@ -397,29 +398,34 @@ def login():
     return render_template('login.html')
 
 
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    """User registration"""
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        username = request.form.get('username', '').strip()
+        password = request.form.get('password', '')
 
-        existing = query_db(
-            'SELECT * FROM users WHERE username = ?', [username],
-            one=True
-        )
-        if existing:
-            flash('Username already taken', 'error')
-        else:
+        if not username or not password:
+            flash('Username and password are required', 'error')
+            return render_template('register.html')
+
+        try:
+            now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             password_hash = generate_password_hash(password)
+
             execute_db(
-                'INSERT INTO users (username, password_hash) VALUES (?, ?)',
-                [username, password_hash]
+                'INSERT INTO users (username, password_hash, created_at, updated_at) VALUES (?, ?, ?, ?)',
+                [username, password_hash, now, now]
             )
+
             flash('Registration successful! You can now log in.', 'success')
             return redirect(url_for('login'))
 
+        except sqlite3.IntegrityError:
+            flash('Username already taken', 'error')
+
     return render_template('register.html')
+
 
 
 @app.route('/logout')
